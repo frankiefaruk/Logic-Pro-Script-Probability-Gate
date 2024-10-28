@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creating a MIDI Note Range Filter with a Probability Gate</title>
+    <!-- Add Prism CSS and Theme -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #2d2d2d;
+            color: #dcdcdc;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: #1e1e1e;
+        }
+        header {
+            background-color: #1e1e1e;
+            text-align: center;
+            padding: 20px;
+            height: auto;
+            position: relative;
+            margin: 0 auto;
+            width: 100%;
+        }
+        header img {
+            height: 50px;
+            display: block;
+            margin: 0 auto;
+        }
+        .header-button {
+            background-color: #1e1e1e;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: block;
+            margin: 10px auto;
+        }
+        .header-button:hover {
+            background-color: #777;
+        }
+        .divider {
+            border-top: 1px solid #777;
+            margin: 20px 0;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        pre {
+            background-color: #282c34;
+            border-radius: 6px;
+            padding: 1em;
+            margin: 1em 0;
+            overflow: auto;
+        }
+        code {
+            font-family: 'Consolas', 'Monaco', 'Andale Mono', monospace;
+            color: grey;
+        }
+        a {
+            color: #ffa500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #ffcc00;
+            text-decoration: underline;
+        }
+        a:visited {
+            color: #ff8c00;
+        }
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+        .copy-button {
+            background-color: #1e1e1e;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <img src="https://raw.githubusercontent.com/frankiefaruk/logo/refs/heads/main/frank_faruk_logo_white.svg" alt="Frank Faruk Logo">
+        <button class="header-button" onclick="window.location.href='https://frankfaruksampling.site'">FRANK FARUK SAMPLING</button>
+    <hr class="divider">
+    </header>
+
+    <!-- Main Content Section -->
+    <main>
+        <!-- Title Section -->
+        <h1>Creating a MIDI Note Range Filter with a Probability Gate</h1>
+
+        <!-- Subtitle Section -->
+        <h2>Shaping MIDI Data with Precision and Randomness</h2>
+
+        <!-- Blog Content -->
+        <section class="blog-content">
+            <p>Working on music production can sometimes involve shaping MIDI data to fit specific creative needs. Today, we're going to take a look at a small but powerful MIDI script designed to filter out notes based on pitch range while also introducing an element of probability to note playback. This script was built in collaboration with Frank Faruk Ceviz & ChatGPT, and it offers a practical way to add a human touch of randomness to your MIDI sequences. Let's dive into what it does and how it works.</p>
+            <h3>Overview</h3>
+            <p>The script is a MIDI Note Range Filter with a Probability Gate. What does that mean? Essentially, it allows you to control which notes are allowed to pass through based on their pitch, while also giving you the option to apply a probability setting that determines whether the filtered notes will actually be sent through.</p>
+            <p>This combination is particularly handy when you want to limit the note range that an instrument plays, but also want to introduce some variability for more dynamic performances. Imagine applying this to a drum kit, where only certain drums are triggered, and only some of the time—this script can help you achieve that level of nuanced control.</p>
+            <h3>Breaking Down the Script</h3>
+            <p>The script is built using JavaScript, and it has three main parameters for user control:</p>
+            <ol>
+                <li><strong>High Note</strong>: This defines the highest MIDI note that will be allowed to pass through. Notes above this value will be filtered out.</li>
+                <li><strong>Low Note</strong>: This parameter sets the lowest MIDI note allowed to pass. Any notes below this threshold will be removed.</li>
+                <li><strong>Probability</strong>: This is where the fun happens. This setting allows you to determine, in percentage terms, how likely it is for a note within the specified range to actually be sent. A value of 100% means all notes in the range will pass, whereas a lower value means that fewer notes will make it through, adding an element of randomness.</li>
+            </ol>
+        </section>
+
+        <!-- Code Section -->
+<h2>Code</h2>
+    <p>
+Go to the MIDI FX slot on the Software Instrument Track you created.
+Click on it, then select Scripter from the MIDI FX options. The Scripter plugin allows you to add and customize JavaScript-based MIDI effects.</p>
+    
+    <div style="display: flex; align-items: center; justify-content: flex-end; margin-bottom: 10px;"><button onclick="copyToClipboard()" style="background-color: #1e1e1e; color: #fff; border: none; padding: 5px 10px; cursor: pointer;">
+            <img src="https://img.icons8.com/ios-glyphs/30/ffffff/copy.png" alt="Copy Icon" style="width: 20px; height: 20px; vertical-align: middle;">
+        </button>
+    </div>
+
+    <pre><code class="language-javascript">
+
+        /* MIDI Note Range Filter with Probability Gate
+Built with Frank Faruk Ceviz & ChatGPT */
+
+// Define MIDI plug-in controls
+var PluginParameters = [
+  {
+    name: "High Note",
+    type: "lin",
+    minValue: 0,
+    maxValue: 127,
+    numberOfSteps: 127,
+    defaultValue: 127
+  },
+  {
+    name: "Low Note",
+    type: "lin",
+    minValue: 0,
+    maxValue: 127,
+    numberOfSteps: 127,
+    defaultValue: 0
+  },
+  {
+    name: "Probability",
+    type: "linear",
+    minValue: 0,
+    maxValue: 100,
+    numberOfSteps: 100,
+    defaultValue: 50,
+    unit: "%"
+  }
+];
+
+var probability = 50;
+
+function HandleMIDI(event) {
+  // Get the user-set low and high note values from the sliders
+  var lowNote = Math.floor(GetParameter("Low Note"));
+  var highNote = Math.floor(GetParameter("High Note"));
+
+  // Check if the event is a note on or note off event
+  if (event instanceof NoteOn || event instanceof NoteOff) {
+    // Get the MIDI note number of the event
+    var noteNumber = event.pitch;
+
+    // Check if the note is outside the user-set range
+    if (noteNumber < lowNote || noteNumber > highNote) {
+      // If so, send an "all notes off" message to stop the note from playing
+      MIDI.allNotesOff();
+
+      // And don't pass the event through
+      return;
+    }
+  }
+
+  // Check if the event should be sent based on probability
+  if (eventShouldSend()) {
+    // Send the event
+    event.send();
+  }
+}
+
+function ParameterChanged(param, value) {
+  if (param === 2) {
+    probability = value;
+  }
+}
+
+function eventShouldSend() {
+  return (Math.ceil(Math.random() * 100) <= probability);
+}
+
+// Pass events through and filter out notes outside the user-set range
+
+</code></pre>
+
+    <hr class="divider" style="width: 100%; margin: 20px 0; border-top: 1px solid #777;">
+    <footer style="text-align: center; margin: 20px 0; color: #dcdcdc; font-size: 14px;">
+        This website design by ChatGPT / Claude.ai <a href="https://frankfaruksampling.site" target="_blank">Frank Faruk Sampling</a> © Copyright 2024
+    </footer>
+
+    <!-- Add Prism JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script>
+        function copyToClipboard() {
+            const codeBlock = document.querySelector('pre code.language-python');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('Code copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy text', err);
+            }
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
